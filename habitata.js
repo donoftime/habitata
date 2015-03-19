@@ -3,8 +3,6 @@ document.querySelector('.auth button').addEventListener("click", function(event)
     var target = event.currentTarget;
     var credentials = captureCredentials(target)
     retrieveUserTaskData(credentials);
-    
-
 });
 
 function captureCredentials (target) {
@@ -30,20 +28,22 @@ function displayUserData() {
 
     var data = JSON.parse(this.responseText);
     var timeline = collectTimelineDates(data);
-    console.log(timeline);
     var data_by_type = transformDataByType(data, timeline);
-    console.log(data_by_type);
 
-    var habit_chart = c3.generate({
-        bindto: '.habits',
-        data: { json: data_by_type.habit }
+    document.querySelector('main').classList.remove('hide-charts');
+
+    habit_chart = c3.generate({
+        bindto: '#habits',
+        data: { json: data_by_type.habit },
+        zoom: { enabled: true }
     });
 
-    var daily_chart = c3.generate({
-        bindto: '.dailies',
-        data: { json: data_by_type.daily }
+    daily_chart = c3.generate({
+        bindto: '#dailies',
+        data: { json: data_by_type.daily },
+        axis: { x: { extent: [5, 10] } },
+        subchart: { show: true }
     });
-    
 }
 
 // Collect a unique array of all the dates from all the histories in asc order
@@ -80,7 +80,7 @@ function collectHistoricalValuesForEachDateInTimelineForATask(timeline, item, ca
         var historical_value = item.history.reduce(function(historical_value, historical_entry) {
             var entry_date = (new Date(historical_entry.date)).toDateString();
             return entry_date === date_string ? historical_entry.value : historical_value; // we get the last value from that day
-        }, 0); 
+        }, 0);
         if (!carry[item.type].hasOwnProperty(item.text)) carry[item.type][item.text] = [];
         carry[item.type][item.text].push(historical_value);
     });

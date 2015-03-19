@@ -3,12 +3,17 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Habitata</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.95.3/css/materialize.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.css" rel="stylesheet" type="text/css"/>
     <link href="habitata.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-    <header><h1>Habitata</h1></header>
-    <main>
+    <header>
+        <h1>Habitata</h1>
+        <small>HabitRPG + Data Visualization</small>
+        <a href="https://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"></a>
+    </header>
+    <main class='hide-charts'>
         <section class="auth">
             <form id="auth">
                 <label>User ID: <input type="text" class="user_id"></input></label>
@@ -16,8 +21,28 @@
                 <button>Retrieve Data</button>
             </form>
         </section>
-        <section class="habits"></section>
-        <section class="dailies"></section>
+        <section class="habits">
+            <header>
+                <h2>Habits</h2>
+                <button onClick="habit_chart.transform('line');">Line</button>
+                <button onClick="habit_chart.transform('bar');">Bar</button>
+                <button onClick="habit_chart.transform('pie');">Pie</button>
+                <button onClick="habit_chart.transform('scatter');">Scatter</button>
+                <button onClick="habit_chart.transform('donut');">Donut</button>
+            </header>
+            <div id='habits'/>
+        </section>
+        <section class="dailies">
+            <header>
+                <h2>Dailies</h2>
+                <button onClick="daily_chart.transform('line');">Line</button>
+                <button onClick="daily_chart.transform('bar');">Bar</button>
+                <button onClick="daily_chart.transform('pie');">Pie</button>
+                <button onClick="daily_chart.transform('scatter');">Scatter</button>
+                <button onClick="daily_chart.transform('donut');">Donut</button>
+            </header>
+            <div id='dailies'/>
+        </section>
         <section class="todos"></section>
     </main>
 </body>

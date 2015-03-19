@@ -1,0 +1,20 @@
+body {
+    padding: 1em;
+}
+
+div {
+    margin-top: 1em;
+}
+
+.hide-charts header {
+    display: none;
+}
+
+h1 {
+    display: inline-block;
+}
+
+small {
+    margin-left: 1em;
+    font-style: italic;
+}
