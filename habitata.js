@@ -35,12 +35,12 @@ function displayUserData() {
     console.log(data_by_type);
 
     var habit_chart = c3.generate({
-        bindTo: '#habits',
+        bindto: '.habits',
         data: { json: data_by_type.habit }
     });
 
     var daily_chart = c3.generate({
-        bindTo: '#dailies',
+        bindto: '.dailies',
         data: { json: data_by_type.daily }
     });
     
