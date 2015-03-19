@@ -29,9 +29,9 @@ function displayUserData() {
     }
 
     var data = JSON.parse(this.responseText);
-    timeline = collectTimelineDates(data);  // Global variable! :V
+    var timeline = collectTimelineDates(data);
     console.log(timeline);
-    var data_by_type = transformDataByType(data);
+    var data_by_type = transformDataByType(data, timeline);
     console.log(data_by_type);
 
     var habit_chart = c3.generate({
@@ -49,36 +49,40 @@ function displayUserData() {
 // Collect a unique array of all the dates from all the histories in asc order
 function collectTimelineDates(data) {
     return [].reduce.call(data, function(carry, item) {
-        if (item.hasOwnProperty('history')) {
-            return carry.concat(item.history.reduce(function(dates, historical_item) {
-                var historical_date = new Date(historical_item.date);
-                dates.push(historical_date.toDateString());
-                return dates;
-            }, []));
-        }
+        if (item.hasOwnProperty('history')) return carry.concat(collectDatesFromTaskHistory(item));
         return carry;
     }, []).filter(function(date, index, self) {
-        return self.indexOf(date) === index;
+        return self.indexOf(date) === index;  // this reduces it to a unique list
     }).sort(function(a,b) {
-        return new Date(a) - new Date(b);
+        return new Date(a) - new Date(b);  // and puts it in ascending order
     });
 }
 
-function transformDataByType(data) {
+function transformDataByType(data, timeline) {
     return [].reduce.call(data, function(carry, item) {
         if (!carry.hasOwnProperty(item.type)) carry[item.type] = {};
-        if (item.hasOwnProperty('history')) {
-            timeline.forEach(function(date_string) {
-                var historical_value = item.history.reduce(function(historical_value, historical_entry) {
-                    var entry_date = (new Date(historical_entry.date)).toDateString();
-                    return entry_date === date_string ? historical_entry.value : historical_value; // we get the last value from that day
-                }, 0); 
-                if (!carry[item.type].hasOwnProperty(item.text)) carry[item.type][item.text] = [];
-                carry[item.type][item.text].push(historical_value);
-            });
-            return carry;
-        }
-        carry[item.type][item.text] = item;
+        if (item.hasOwnProperty('history')) return collectHistoricalValuesForEachDateInTimelineForATask(timeline, item, carry);
+        carry[item.type][item.text] = item;  // otherwise just throw all the information in there until I think of something to do with it...
         return carry;
     }, {});
+}
+
+function collectDatesFromTaskHistory(task) {
+    return task.history.reduce(function(dates, historical_item) {
+        var historical_date = new Date(historical_item.date);
+        dates.push(historical_date.toDateString());
+        return dates;  // here we collect all the dates from each item's history
+    }, [])
+}
+
+function collectHistoricalValuesForEachDateInTimelineForATask(timeline, item, carry) {
+    timeline.forEach(function(date_string) {
+        var historical_value = item.history.reduce(function(historical_value, historical_entry) {
+            var entry_date = (new Date(historical_entry.date)).toDateString();
+            return entry_date === date_string ? historical_entry.value : historical_value; // we get the last value from that day
+        }, 0); 
+        if (!carry[item.type].hasOwnProperty(item.text)) carry[item.type][item.text] = [];
+        carry[item.type][item.text].push(historical_value);
+    });
+    return carry;
 }
